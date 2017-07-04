@@ -1,0 +1,682 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="react,jsx,babel6," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="背景本地项目部分页面使用 react ,通常就是一两个jsx文件需要编译。所以不打算使用 webpack 等打包工具。只需要最简单的能通过命令行编译 ES6 语法编写的 jsx 源文件为普通js文件 Babel CLI 的安装在官方网站安装说明部分，建议安装 babel CLI 使用本地方式，而非全局方式。一是因为本地开发中，各个项目依赖的 Babel 版本不尽相同，另外一方面是让项目更加独立，不">
+<meta name="keywords" content="react,jsx,babel6">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Babel CLI 安装及使用">
+<meta property="og:url" content="https://blog.sandy1890.com/2016/10/20/react_babal/index.html">
+<meta property="og:site_name" content="安迪桑的笔记">
+<meta property="og:description" content="背景本地项目部分页面使用 react ,通常就是一两个jsx文件需要编译。所以不打算使用 webpack 等打包工具。只需要最简单的能通过命令行编译 ES6 语法编写的 jsx 源文件为普通js文件 Babel CLI 的安装在官方网站安装说明部分，建议安装 babel CLI 使用本地方式，而非全局方式。一是因为本地开发中，各个项目依赖的 Babel 版本不尽相同，另外一方面是让项目更加独立，不">
+<meta property="og:updated_time" content="2017-07-04T06:51:19.167Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Babel CLI 安装及使用">
+<meta name="twitter:description" content="背景本地项目部分页面使用 react ,通常就是一两个jsx文件需要编译。所以不打算使用 webpack 等打包工具。只需要最简单的能通过命令行编译 ES6 语法编写的 jsx 源文件为普通js文件 Babel CLI 的安装在官方网站安装说明部分，建议安装 babel CLI 使用本地方式，而非全局方式。一是因为本地开发中，各个项目依赖的 Babel 版本不尽相同，另外一方面是让项目更加独立，不">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://blog.sandy1890.com/2016/10/20/react_babal/"/>
+
+
+
+
+
+  <title>Babel CLI 安装及使用 | 安迪桑的笔记</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">安迪桑的笔记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://blog.sandy1890.com/2016/10/20/react_babal/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="sandy1890">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="安迪桑的笔记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Babel CLI 安装及使用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>本地项目部分页面使用 react ,通常就是一两个jsx文件需要编译。所以不打算使用 webpack 等打包工具。只需要最简单的能通过命令行编译 ES6 语法编写的 jsx 源文件为普通js文件</p>
+<h2 id="Babel-CLI-的安装"><a href="#Babel-CLI-的安装" class="headerlink" title="Babel CLI 的安装"></a>Babel CLI 的安装</h2><p>在官方网站安装说明部分，建议安装 babel CLI 使用本地方式，而非全局方式。一是因为本地开发中，各个项目依赖的 Babel 版本不尽相同，另外一方面是让项目更加独立，不依赖于具体的机器环境</p>
+<p>There are two primary reasons for this.</p>
+<ul>
+<li>Different projects on the same machine can depend on different versions of Babel allowing you to update one at a time.</li>
+<li>It means you do not have an implicit dependency on the environment you are working in. Making your project far more portable and easier to setup.</li>
+</ul>
+<p>在项目根目录中运行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install --save-dev babel-cli babel-preset-latest</div></pre></td></tr></table></figure></p>
+<p>因为全局安装运行 Babel 弊大于利，如果你之前已经全局安装过 Babel,可以使用如下命令卸载全局的 Babel<br><figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ <span class="built_in">npm</span> uninstall --<span class="built_in">global</span> babel-cli</div></pre></td></tr></table></figure></p>
+<h2 id="使用-ES6-开发-React-需要安装的其它模块"><a href="#使用-ES6-开发-React-需要安装的其它模块" class="headerlink" title="使用 ES6 开发 React 需要安装的其它模块"></a>使用 ES6 开发 React 需要安装的其它模块</h2><ul>
+<li>babel-preset-es2015 （ES2015(ES6) 语法转换支持）</li>
+<li>babel-preset-react （JSX 语法转换支持）</li>
+</ul>
+<p>在项目根目录中运行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ npm install --save-dev babel-preset-es2015</div><div class="line">$ npm install --save-dev babel-preset-react</div></pre></td></tr></table></figure></p>
+<h2 id="监听并实时编译指定文件"><a href="#监听并实时编译指定文件" class="headerlink" title="监听并实时编译指定文件　"></a>监听并实时编译指定文件　</h2><p>准备工具完成后，我们可以开始编写代码了。在代码编写过程中，通过如下命令实时监控代码变动并编译生成转换文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">babel 源文件名 --watch --presets es2015,react --out-file 转换后的文件名</div></pre></td></tr></table></figure></p>
+<p>我们也可以使用如下命令，将 src 目录下的所有文件编译到 lib 目录下<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">babel src --watch --presets es2015,react  --out-dir lib</div></pre></td></tr></table></figure></p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="http://www.csdn.net/article/2015-11-17/2826233" target="_blank" rel="external">走进Babel 6.0 全新特性解析</a></li>
+<li><a href="http://blog.csdn.net/windfromcn/article/details/51307153" target="_blank" rel="external">Babel5 升级到 Babel6 总结</a></li>
+<li><a href="http://babeljs.io/" target="_blank" rel="external">bablejs 官网</a></li>
+<li><a href="http://es6.ruanyifeng.com/" target="_blank" rel="external">ECMAScript 6 入门</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/react/" rel="tag"># react</a>
+          
+            <a href="/tags/jsx/" rel="tag"># jsx</a>
+          
+            <a href="/tags/babel6/" rel="tag"># babel6</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/13/在多机部署时Yii的assetManager资源发布目录不一致问题/" rel="next" title="在多机部署时 Yii 的 assetManager 资源发布目录不一致问题">
+                <i class="fa fa-chevron-left"></i> 在多机部署时 Yii 的 assetManager 资源发布目录不一致问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/10/23/pptpd_iptables/" rel="prev" title="CentOS 7 使用 pptpd 搭建 VPN 的 iptables 配置">
+                CentOS 7 使用 pptpd 搭建 VPN 的 iptables 配置 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="sandy1890" />
+          <p class="site-author-name" itemprop="name">sandy1890</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Babel-CLI-的安装"><span class="nav-number">2.</span> <span class="nav-text">Babel CLI 的安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用-ES6-开发-React-需要安装的其它模块"><span class="nav-number">3.</span> <span class="nav-text">使用 ES6 开发 React 需要安装的其它模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#监听并实时编译指定文件"><span class="nav-number">4.</span> <span class="nav-text">监听并实时编译指定文件　</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">sandy1890</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

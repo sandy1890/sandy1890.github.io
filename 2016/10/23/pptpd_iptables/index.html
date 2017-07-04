@@ -1,0 +1,702 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="vpn,pptpd,linux," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="pptpd设置主要会操作三个配置文件：  主服务配置文件 /etc/pptpd.conf DNS等选项配置文件 /etc/ppp/options.pptpd 用户授权配置文件 /etc/ppp/chap-secrets  pptpd服务配置编辑 /etc/pptpd.conf 去掉前面的#去掉：12localip 192.168.1remoteip 192.168.1.234-238,192.16">
+<meta name="keywords" content="vpn,pptpd,linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CentOS 7 使用 pptpd 搭建 VPN 的 iptables 配置">
+<meta property="og:url" content="https://blog.sandy1890.com/2016/10/23/pptpd_iptables/index.html">
+<meta property="og:site_name" content="安迪桑的笔记">
+<meta property="og:description" content="pptpd设置主要会操作三个配置文件：  主服务配置文件 /etc/pptpd.conf DNS等选项配置文件 /etc/ppp/options.pptpd 用户授权配置文件 /etc/ppp/chap-secrets  pptpd服务配置编辑 /etc/pptpd.conf 去掉前面的#去掉：12localip 192.168.1remoteip 192.168.1.234-238,192.16">
+<meta property="og:updated_time" content="2017-07-04T06:51:19.166Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CentOS 7 使用 pptpd 搭建 VPN 的 iptables 配置">
+<meta name="twitter:description" content="pptpd设置主要会操作三个配置文件：  主服务配置文件 /etc/pptpd.conf DNS等选项配置文件 /etc/ppp/options.pptpd 用户授权配置文件 /etc/ppp/chap-secrets  pptpd服务配置编辑 /etc/pptpd.conf 去掉前面的#去掉：12localip 192.168.1remoteip 192.168.1.234-238,192.16">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://blog.sandy1890.com/2016/10/23/pptpd_iptables/"/>
+
+
+
+
+
+  <title>CentOS 7 使用 pptpd 搭建 VPN 的 iptables 配置 | 安迪桑的笔记</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">安迪桑的笔记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://blog.sandy1890.com/2016/10/23/pptpd_iptables/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="sandy1890">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="安迪桑的笔记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CentOS 7 使用 pptpd 搭建 VPN 的 iptables 配置</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="pptpd设置"><a href="#pptpd设置" class="headerlink" title="pptpd设置"></a>pptpd设置</h2><p>主要会操作三个配置文件：</p>
+<ul>
+<li>主服务配置文件 <code>/etc/pptpd.conf</code></li>
+<li>DNS等选项配置文件 <code>/etc/ppp/options.pptpd</code></li>
+<li>用户授权配置文件 <code>/etc/ppp/chap-secrets</code></li>
+</ul>
+<h3 id="pptpd服务配置"><a href="#pptpd服务配置" class="headerlink" title="pptpd服务配置"></a>pptpd服务配置</h3><p>编辑 <code>/etc/pptpd.conf</code> 去掉前面的#去掉：<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">localip <span class="number">192.168</span><span class="number">.1</span></div><div class="line">remoteip <span class="number">192.168</span><span class="number">.1</span><span class="number">.234</span><span class="number">-238</span>,<span class="number">192.168</span><span class="number">.1</span><span class="number">.245</span></div></pre></td></tr></table></figure></p>
+<p>解释下: localip是pptp使用的ip, 可以随意; remoteip链接到vpn的用户分配到ip的访问, 和localip同一个网段即可.</p>
+<h3 id="DNS设置"><a href="#DNS设置" class="headerlink" title="DNS设置"></a>DNS设置</h3><p>编辑 <code>/etc/ppp/options.pptpd</code> 去掉ms-dns前面的#，修改成下面的数据：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ms-dns 8.8.8.8</div><div class="line">ms-dns 8.8.4.4</div></pre></td></tr></table></figure></p>
+<p>解释: 设置链接到vpn的用户如果访问网络时使用的dns, 和他们自己电脑与服务器设置的dns没任何关系.</p>
+<h3 id="VPN账号和密码"><a href="#VPN账号和密码" class="headerlink" title="VPN账号和密码"></a>VPN账号和密码</h3><p>编辑 <code>/etc/ppp/chap-secrets</code>，直接输入如下字段,vpsma可以换成其他字段，<br>格式: <code>用户名 pptpd 密码 IP</code> 的形式编写，如果需要多个账号就写多行，一行一个<br><figure class="highlight subunit"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">test </span>pptpd 1234 *</div></pre></td></tr></table></figure></p>
+<p>解释: 这是链接vpn的用户密码, 每行一个, 代表一个用户.<br>格式说明: 第一列为用户, 依次是 服务器名称, 密码和ip, 中间使用一个空格或者tab隔开.<br>用户和密码可随意。服务器名(pptpd)不要改,如果修改请保证和<code>/etc/pptpd.conf</code>中的<code>name</code> 保持一致。后面的*代表ip由pptpd自动分配</p>
+<h3 id="开启ip转发"><a href="#开启ip转发" class="headerlink" title="开启ip转发"></a>开启ip转发</h3><p>编辑 <code>/etc/sysctl.conf</code> 文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#将“net.ipv4.ip_forward”改为1，开启ip转发。这个不是必须的</span></div><div class="line">net.ipv4.ip_forward=1</div><div class="line"><span class="comment">#同时注释掉 “net.ipv4.tcp_syncookies = 1” (前面加#)</span></div><div class="line"><span class="comment"># net.ipv4.tcp_syncookies = 1</span></div><div class="line"></div><div class="line"><span class="comment">#保存退出`sysctl.conf`文件编辑后，运行下面的命令，能让设置立即生效 </span></div><div class="line">sysctl -p</div></pre></td></tr></table></figure></p>
+<h3 id="配置完成后，重启pptpd服务并设置pptpd开机自启动"><a href="#配置完成后，重启pptpd服务并设置pptpd开机自启动" class="headerlink" title="配置完成后，重启pptpd服务并设置pptpd开机自启动"></a>配置完成后，重启pptpd服务并设置pptpd开机自启动</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">service pptpd start</div><div class="line">systemctl enabled pptpd</div><div class="line"></div><div class="line"><span class="comment">#启动服务后，可能通过系统日志查看运行情况</span></div><div class="line">tailf /var/<span class="built_in">log</span>/messages</div></pre></td></tr></table></figure>
+<h2 id="iptables-配置"><a href="#iptables-配置" class="headerlink" title="iptables 配置"></a>iptables 配置</h2><h3 id="iptables-命令知识"><a href="#iptables-命令知识" class="headerlink" title="iptables 命令知识"></a>iptables 命令知识</h3><p>ipdables 配置文件位于 <code>/etc/sysconfig/iptables</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#带行号查看当前所有规则 </span></div><div class="line">iptables -L -n --line-numbers</div><div class="line"><span class="comment">#清除所有规则</span></div><div class="line">iptables -F</div><div class="line"><span class="comment">#删除指定行号（以下命令中的“5”为指定行号）规则</span></div><div class="line">iptables -D 5</div><div class="line"><span class="comment">#保存当前配置;相当于旧版/etc/init.d/iptables save</span></div><div class="line">service iptables save</div><div class="line"><span class="comment">#重启iptables;相当于旧版本/etc/init.d/iptables restart</span></div><div class="line">service iptables restart</div><div class="line"><span class="comment">#注册iptables服务;相当于旧版 chkconfig iptables on</span></div><div class="line">systemctl <span class="built_in">enable</span> iptables.service</div><div class="line"><span class="comment">#开启服务</span></div><div class="line">systemctl start iptables.service</div><div class="line"><span class="comment">#查看状态</span></div><div class="line">systemctl status iptables.service</div></pre></td></tr></table></figure>
+<h3 id="允许连接PPTP服务-1723为pptp服务端口"><a href="#允许连接PPTP服务-1723为pptp服务端口" class="headerlink" title="允许连接PPTP服务,1723为pptp服务端口"></a>允许连接PPTP服务,1723为pptp服务端口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">iptables -I INPUT -p tcp --dport 1723 -j ACCEPT</div><div class="line">iptables -A INPUT -p tcp -m state --state NEW,RELATED,ESTABLISHED -m tcp --dport 1723 -j ACCEPT</div></pre></td></tr></table></figure>
+<h3 id="允许建立VPN隧道-否则无法验证用户名及密码"><a href="#允许建立VPN隧道-否则无法验证用户名及密码" class="headerlink" title="允许建立VPN隧道,否则无法验证用户名及密码"></a>允许建立VPN隧道,否则无法验证用户名及密码</h3><figure class="highlight pf"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">iptables -I INPUT -p gre -j ACCEPT</div><div class="line">iptables -A INPUT -p gre -m <span class="keyword">state</span> --state NEW,RELATED,ESTABLISHED -j ACCEPT</div></pre></td></tr></table></figure>
+<h3 id="建立NAT转换规则-否则拨上也无法通过远程网关连上公网"><a href="#建立NAT转换规则-否则拨上也无法通过远程网关连上公网" class="headerlink" title="建立NAT转换规则,否则拨上也无法通过远程网关连上公网"></a>建立NAT转换规则,否则拨上也无法通过远程网关连上公网</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#这里一定看清楚，里面的ip“192.168.1.0/24”要和 /etc/pptpd.conf 的“localip”配置网段对应，还要注意网卡eth0，如果你的网卡不是eth0，就改成你相应的网卡名</span></div><div class="line"></div><div class="line"><span class="comment">#OpenVZ系统用此命令,1.1.1.1为你的VPS的IP地址</span></div><div class="line">iptables -t nat -A POSTROUTING -s 192.168.1.0/24 -o eth0 -j SNAT --to 1.1.1.1</div><div class="line"></div><div class="line"><span class="comment">#XEN系统用这个命令</span></div><div class="line">iptables -t nat -A POSTROUTING -s 192.168.1.0/24 -o eth0 -j MASQUERADE</div></pre></td></tr></table></figure>
+<h3 id="如果某些网站不能访问，加上"><a href="#如果某些网站不能访问，加上" class="headerlink" title="如果某些网站不能访问，加上"></a>如果某些网站不能访问，加上</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">iptables -I FORWARD -p tcp --syn -i ppp+ -j TCPMSS --<span class="built_in">set</span>-mss 1356</div></pre></td></tr></table></figure>
+<h4 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h4><p>linux下pptp搭建的vpn代理上网很慢解决方法。<br>在pptp所在的linux服务的iptables的*filter表中加入<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">-I FORWARD -p tcp --syn -i ppp+ -j TCPMSS --<span class="built_in">set</span>-mss 1356</div></pre></td></tr></table></figure></p>
+<p>或者在命令提示符运行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/sbin/iptables -I FORWARD -p tcp --syn -i ppp+ -j TCPMSS --<span class="built_in">set</span>-mss 1356</div></pre></td></tr></table></figure></p>
+<p>拨通vpn，在服务器上用netstat –i查看接口，得到<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Iface MTU Met RX-OK RX-ERR RX-DRP RX-OVR TX-OK TX-ERR TX-DRP TX-OVR Flg</div><div class="line">eth0 1500 0 102528561 0 0 0 194391413 0 0 0 BRU</div><div class="line">eth1 1500 0 519820535 954 11553 924 208798037 0 0 0 BRU</div><div class="line">lo 16436 0 151062 0 0 0 151062 0 0 0 LRU</div><div class="line">ppp0 1396 0 19 0 0 0 8 0 0 0 OPRU</div></pre></td></tr></table></figure></p>
+<p>可知ppp的最大mtu为1396，当然，对应的mss应为（mtu-20字节的IP头部+20字节的TCP 头部=）1356</p>
+<ul>
+<li>1、计算机网络中的MSS：<br>MSS: Maximum Segment Size 最大分段大小<br>MSS最大传输大小的缩写，是TCP协议里面的一个概念。</li>
+</ul>
+<p>MSS就是TCP数据包每次能够传输的最大数据分段。为了达到最佳的传输效能，TCP协议在建立连接的时候通常要协商双方的MSS值，这个值TCP协议在实现的时候往往用MTU值代替（需要减去IP数据包包头的大小20Bytes和TCP数据段的包头20Bytes）所以往往MSS为1460。通讯双方会根据双方提供的MSS值得最小值确定为这次连接的最大MSS值。</p>
+<ul>
+<li>2、mtu是网络传输最大报文包。<br>mss是网络传输数据最大值。mss加包头数据就等于mtu.<br>简单说拿TCP包做例子。<br>报文传输1400字节的数据的话，那么mss就是1400，再加上20字节IP包头，20字节tcp包头，那么mtu就是1400+20+20.</li>
+</ul>
+<p>当然传输的时候其他的协议还要加些包头在前面，总之mtu就是总的最后发出去的报文大小。mss就是你需要发出去的数据大小。</p>
+<p>假设PC建立了到SERVER的HTTP连接，PC希望从SERVER下载一个大的网页。SERVER接收到PC的请求后开始发送大网页文件，其IP的DF位置1，不允许分片，IP报文长度为1500字节。到达VPN网关2的外网口（以太）后，VPN网关2发现其长度超过了1500个字节，于是将其丢弃，并给SERVER发回一个目的地址不可达的ICMP信息，同时指出“MTU of next hop: 1500”。PC接收到该消息后，又按照1500字节对外发送，又被丢弃，于是就形成了循环，无法通讯。</p>
+<p>根据上述的分析，很容易得到如下解决方式，在VPN网关2的出接口设置MTU为1500－4－20＝1476，这样VPN网关2返回ICMP不可达消息时将给出”MTU of next hop: 1476”。SERVER将以1476作为自己的最大MTU对外发送，到达VPN网关1，封装GRE和外层IP头后就不会超过1500而顺利发到对端。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">-I FORWARD -p tcp --syn -i ppp+ -j TCPMSS --<span class="built_in">set</span>-mss 1356</div></pre></td></tr></table></figure>
+<p>因为mss是在TCP连接建立开始时，通过带有syn标志的IP数据包进行传输的，所以我们在iptables里面规定，在转发数据时，只要发现产生于ppt<em>的带有 syn标志数据包时，将其mss设定为1356字节，这样就与ppp0接口的路径MTU向匹配了，数据自然就可以畅通无阻啦。<br>（注，vpn拨入一个，则建立一个ppt</em>的虚拟设备，这个可以再linux上用ifcpnfig看到，第一个为ppp1，第二个为ppp2……）</p>
+<ul>
+<li>3、在iptables里面加入一条规则</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">iptables -A FORWARD -p tcp --syn -s 10.87.200.0/31 -j TCPMSS --<span class="built_in">set</span>-mss 1356</div></pre></td></tr></table></figure>
+<p>因为mss是在TCP连接建立开始时，通过带有syn标志的IP数据包进行传输的，所以我们在iptables里面规定，在转发数据时，只要发现带有 syn标志并且源地址为主机B的IP数据包时，将其mss设定为1356字节，这样就与ppp0接口的路径MTU向匹配了，数据自然就可以畅通无阻啦。</p>
+<p>因为mss是在TCP连接建立开始时，通过带有syn标志的IP数据包进行传输的，所以我们在iptables里面规定，在转发数据时，只要发现带有 syn标志并且源地址为主机B的IP数据包时，将其mss设定为1356字节，这样就与ppp0接口的路径MTU向匹配了，数据自然就可以畅通无阻啦。</p>
+<h2 id="此次在实际-CentOS-环境中完整配置规则"><a href="#此次在实际-CentOS-环境中完整配置规则" class="headerlink" title="此次在实际 CentOS 环境中完整配置规则"></a>此次在实际 CentOS 环境中完整配置规则</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/sh</span></div><div class="line"><span class="comment">#允许连接PPTP服务</span></div><div class="line">iptables -I INPUT -p tcp --dport 1723 -j ACCEPT</div><div class="line"><span class="comment">#允许建立VPN隧道以验证用户名密码</span></div><div class="line">iptables -I INPUT -p gre -j ACCEPT</div><div class="line"><span class="comment">#建立NAT转换规则</span></div><div class="line">iptables -t nat -I POSTROUTING -s 192.168.1.0/24 -o eth0 -j MASQUERADE</div><div class="line"><span class="comment">#允许pptpd转发</span></div><div class="line">iptables -I FORWARD -i ppp+ -m state --state NEW,RELATED,ESTABLISHED -j ACCEPT</div><div class="line"><span class="comment">#优化网络数据传输速度</span></div><div class="line">iptables -I FORWARD -p tcp --syn -i ppp+ -j TCPMSS --<span class="built_in">set</span>-mss 1356</div><div class="line"><span class="built_in">echo</span> <span class="string">"完成"</span></div></pre></td></tr></table></figure>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/vpn/" rel="tag"># vpn</a>
+          
+            <a href="/tags/pptpd/" rel="tag"># pptpd</a>
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/20/react_babal/" rel="next" title="Babel CLI 安装及使用">
+                <i class="fa fa-chevron-left"></i> Babel CLI 安装及使用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/10/31/react_key/" rel="prev" title="React基础－－key">
+                React基础－－key <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="sandy1890" />
+          <p class="site-author-name" itemprop="name">sandy1890</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#pptpd设置"><span class="nav-number">1.</span> <span class="nav-text">pptpd设置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#pptpd服务配置"><span class="nav-number">1.1.</span> <span class="nav-text">pptpd服务配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS设置"><span class="nav-number">1.2.</span> <span class="nav-text">DNS设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#VPN账号和密码"><span class="nav-number">1.3.</span> <span class="nav-text">VPN账号和密码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#开启ip转发"><span class="nav-number">1.4.</span> <span class="nav-text">开启ip转发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置完成后，重启pptpd服务并设置pptpd开机自启动"><span class="nav-number">1.5.</span> <span class="nav-text">配置完成后，重启pptpd服务并设置pptpd开机自启动</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#iptables-配置"><span class="nav-number">2.</span> <span class="nav-text">iptables 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#iptables-命令知识"><span class="nav-number">2.1.</span> <span class="nav-text">iptables 命令知识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#允许连接PPTP服务-1723为pptp服务端口"><span class="nav-number">2.2.</span> <span class="nav-text">允许连接PPTP服务,1723为pptp服务端口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#允许建立VPN隧道-否则无法验证用户名及密码"><span class="nav-number">2.3.</span> <span class="nav-text">允许建立VPN隧道,否则无法验证用户名及密码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#建立NAT转换规则-否则拨上也无法通过远程网关连上公网"><span class="nav-number">2.4.</span> <span class="nav-text">建立NAT转换规则,否则拨上也无法通过远程网关连上公网</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如果某些网站不能访问，加上"><span class="nav-number">2.5.</span> <span class="nav-text">如果某些网站不能访问，加上</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#原因分析"><span class="nav-number">2.5.1.</span> <span class="nav-text">原因分析</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#此次在实际-CentOS-环境中完整配置规则"><span class="nav-number">3.</span> <span class="nav-text">此次在实际 CentOS 环境中完整配置规则</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">sandy1890</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

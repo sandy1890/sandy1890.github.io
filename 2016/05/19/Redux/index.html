@@ -1,0 +1,729 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="react,nodejs," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="Reduxstate当前应用的数据状态，决定了UI应该如何展示，state变化通常将导致UI变化 action描述“发生了什么的”对象，用于数据传递。必须包含一个type字段用于表示将执行的动作.通常被 store.dispatch()调用 例如以下action可用于描述id为42的文章被点赞这个行为1｛type: &apos;LIKE_ARTICLE&apos;, articleId: 42 &amp;#125;; red">
+<meta name="keywords" content="react,nodejs">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redux概念">
+<meta property="og:url" content="https://blog.sandy1890.com/2016/05/19/Redux/index.html">
+<meta property="og:site_name" content="安迪桑的笔记">
+<meta property="og:description" content="Reduxstate当前应用的数据状态，决定了UI应该如何展示，state变化通常将导致UI变化 action描述“发生了什么的”对象，用于数据传递。必须包含一个type字段用于表示将执行的动作.通常被 store.dispatch()调用 例如以下action可用于描述id为42的文章被点赞这个行为1｛type: &apos;LIKE_ARTICLE&apos;, articleId: 42 &amp;#125;; red">
+<meta property="og:updated_time" content="2017-07-04T06:51:19.164Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redux概念">
+<meta name="twitter:description" content="Reduxstate当前应用的数据状态，决定了UI应该如何展示，state变化通常将导致UI变化 action描述“发生了什么的”对象，用于数据传递。必须包含一个type字段用于表示将执行的动作.通常被 store.dispatch()调用 例如以下action可用于描述id为42的文章被点赞这个行为1｛type: &apos;LIKE_ARTICLE&apos;, articleId: 42 &amp;#125;; red">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://blog.sandy1890.com/2016/05/19/Redux/"/>
+
+
+
+
+
+  <title>Redux概念 | 安迪桑的笔记</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">安迪桑的笔记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://blog.sandy1890.com/2016/05/19/Redux/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="sandy1890">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="安迪桑的笔记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Redux概念</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Redux"><a href="#Redux" class="headerlink" title="Redux"></a>Redux</h1><h2 id="state"><a href="#state" class="headerlink" title="state"></a>state</h2><p>当前应用的数据状态，决定了UI应该如何展示，state变化通常将导致UI变化</p>
+<h2 id="action"><a href="#action" class="headerlink" title="action"></a>action</h2><p>描述“发生了什么的”对象，用于数据传递。必须包含一个type字段用于表示将执行的动作.<br>通常被 store.dispatch()调用</p>
+<p>例如以下action可用于描述id为42的文章被点赞这个行为<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">｛<span class="string">type:</span> <span class="string">'LIKE_ARTICLE'</span>, <span class="string">articleId:</span> <span class="number">42</span> &#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="reducer"><a href="#reducer" class="headerlink" title="reducer"></a>reducer</h2><p>计算数据，将变化的数据合并或去除，返回变化后的state。实际上就是响应store.dispatch()调用。<br>处理action返回新的state</p>
+<h2 id="store"><a href="#store" class="headerlink" title="store"></a>store</h2><p>存放应用中所有的state，将action和reducer联系在一起。通过dispatch一个action触发reducer，从而改变应用的state</p>
+<p>Store 有以下职责：</p>
+<ul>
+<li>维持应用的 state；</li>
+<li>提供 getState() 方法获取 state；</li>
+<li>提供 dispatch(action) 方法更新 state；</li>
+<li>通过 subscribe(listener) 注册监听器。</li>
+</ul>
+<h2 id="Redux函数和react-redux组件"><a href="#Redux函数和react-redux组件" class="headerlink" title="Redux函数和react-redux组件"></a>Redux函数和react-redux组件</h2><h3 id="Redux-1"><a href="#Redux-1" class="headerlink" title="Redux"></a>Redux</h3><ul>
+<li><p><code>createStore(reducer, [initialState])</code> 创建一个 Redux store 来以存放应用中所有的 state　　</p>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><p>reducer (Function):</p>
+<p>接收两个参数，分别是当前的 state 树和要处理的 action，返回新的 state 树。</p>
+</li>
+<li><p>[initialState] (any):</p>
+<p>初始时的 state。在同构应用中，你可以决定是否把服务端传来的 state 水合（hydrate）后传给它，或者从之前保存的用户会话中恢复一个传给它。如果你使用 combineReducers 创建 reducer，它必须是一个普通对象，与传入的 keys 保持同样的结构。否则，你可以自由传入任何 reducer 可理解的内容。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code>combineReducers(reducers)</code></p>
+<p>  随着应用变得复杂，需要对 reducer 函数 进行拆分，拆分后的每一块独立负责管理 state 的一部分。</p>
+<p>  combineReducers 辅助函数的作用是，把一个由多个不同 reducer 函数作为 value 的 object，合并成一个最终的 reducer 函数，然后就可以对这个 reducer 调用 createStore。</p>
+<p>  合并后的 reducer 可以调用各个子 reducer，并把它们的结果合并成一个 state 对象。state 对象的结构由传入的多个 reducer 的 key 决定。</p>
+</li>
+</ul>
+<h3 id="react-redux"><a href="#react-redux" class="headerlink" title="react-redux"></a>react-redux</h3><ul>
+<li><p><code>&lt;Provider store={}&gt;</code></p>
+<p>  对组件注入<code>Redux Store</code></p>
+</li>
+<li><p>connect([mapStateToProps], [mapDispatchToProps], [mergeProps], [options])</p>
+<p>连接 <code>React</code> 组件与 <code>Redux store</code></p>
+<p>参数</p>
+<ul>
+<li><p>mapStateToProps(state, [ownProps]): stateProps</p>
+<p> 如果定义该参数，组件将会监听 Redux store 的变化。任何时候，只要 Redux store 发生改变，mapStateToProps 函数就会被调用。该回调函数必须返回一个纯对象，这个对象会与组件的 props 合并。如果你省略了这个参数，你的组件将不会监听 Redux store。如果指定了该回调函数中的第二个参数 ownProps，则该参数的值为传递到组件的 props，而且只要组件接收到新的 props，mapStateToProps 也会被调用。</p>
+</li>
+<li><p>mapDispatchToProps(dispatch, [ownProps]): dispatchProps</p>
+<p>如果传递的是一个对象，那么每个定义在该对象的函数都将被当作 Redux action creator，而且这个对象会与 Redux store 绑定在一起，其中所定义的方法名将作为属性名，合并到组件的 props 中。如果传递的是一个函数，该函数将接收一个 dispatch 函数，然后由你来决定如何返回一个对象，这个对象通过 dispatch 函数与 action creator 以某种方式绑定在一起（提示：你也许会用到 Redux 的辅助函数 bindActionCreators()）。如果你省略这个 mapDispatchToProps 参数，默认情况下，dispatch 会注入到你的组件 props 中。如果指定了该回调函数中第二个参数 ownProps，该参数的值为传递到组件的 props，而且只要组件接收到新 props，mapDispatchToProps 也会被调用。</p>
+</li>
+<li><p>mergeProps(stateProps, dispatchProps, ownProps): props</p>
+<p>如果指定了这个参数，mapStateToProps() 与 mapDispatchToProps() 的执行结果和组件自身的 props 将传入到这个回调函数中。该回调函数返回的对象将作为 props 传递到被包装的组件中。你也许可以用这个回调函数，根据组件的 props 来筛选部分的 state 数据，或者把 props 中的某个特定变量与 action creator 绑定在一起。如果你省略这个参数，默认情况下返回 Object.assign({}, ownProps, stateProps, dispatchProps) 的结果。</p>
+</li>
+<li><p>options 如果指定这个参数，可以定制 connector 的行为。</p>
+<ul>
+<li><p>pure = true</p>
+<p>如果为 true，connector 将执行 shouldComponentUpdate 并且浅对比 mergeProps 的结果，避免不必要的更新，前提是当前组件是一个“纯”组件，它不依赖于任何的输入或 state 而只依赖于 props 和 Redux store 的 state。默认值为 true。</p>
+</li>
+<li><p>withRef = false</p>
+<p>如果为 true，connector 会保存一个对被包装组件实例的引用，该引用通过 getWrappedInstance() 方法获得。默认值为 false</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h3><ul>
+<li>使用Redux的createStore()创建一个包含了action和reducer的store</li>
+<li>将应用根组件嵌套到react-redux的 <code>&lt;Provider store&gt;</code> 组件中，从页实现绑定</li>
+<li>在应用根组件中使用react-redux的connect()实现连接，此时应用根组件的props可以接收到connect函数mapStateToProps参数中指定的store数据和方法</li>
+</ul>
+<h3 id="参考网站"><a href="#参考网站" class="headerlink" title="参考网站"></a>参考网站</h3><ul>
+<li><a href="http://cn.redux.js.org" target="_blank" rel="external">http://cn.redux.js.org</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/react/" rel="tag"># react</a>
+          
+            <a href="/tags/nodejs/" rel="tag"># nodejs</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/13/解决php的xdebug和composer冲突/" rel="next" title="解决php的xdebug和composer冲突">
+                <i class="fa fa-chevron-left"></i> 解决php的xdebug和composer冲突
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/20/nodejs_stack/" rel="prev" title="Node开发技术栈">
+                Node开发技术栈 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="sandy1890" />
+          <p class="site-author-name" itemprop="name">sandy1890</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redux"><span class="nav-number">1.</span> <span class="nav-text">Redux</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#state"><span class="nav-number">1.1.</span> <span class="nav-text">state</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#action"><span class="nav-number">1.2.</span> <span class="nav-text">action</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reducer"><span class="nav-number">1.3.</span> <span class="nav-text">reducer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#store"><span class="nav-number">1.4.</span> <span class="nav-text">store</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redux函数和react-redux组件"><span class="nav-number">1.5.</span> <span class="nav-text">Redux函数和react-redux组件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redux-1"><span class="nav-number">1.5.1.</span> <span class="nav-text">Redux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#react-redux"><span class="nav-number">1.5.2.</span> <span class="nav-text">react-redux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤"><span class="nav-number">1.5.3.</span> <span class="nav-text">步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考网站"><span class="nav-number">1.5.4.</span> <span class="nav-text">参考网站</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">sandy1890</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
